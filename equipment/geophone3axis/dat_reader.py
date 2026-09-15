@@ -58,10 +58,11 @@ UNIT3AXIS_FULLSCALE_VPEAK_G1 = 2.5
 # `geophones-firmware/doc/hardware/board-revisions.md`.
 FULLSCALE_VPEAK_G1_BY_HWREV = {
     1: 2.5,  # V2 et V3.1 — ADS1285, VREF 4,096 V (REF6041)
-    # 2: ...  # V3.2 — ADS131E08, reference interne. Valeur a etablir sur la fiche du
-    #         # composant AVANT de lire des enregistrements V3.2 : laisser l'entree
-    #         # absente est volontaire, le lecteur avertit alors d'une revision inconnue
-    #         # plutot que de convertir en silence avec la pleine echelle de l'ADS1285.
+    2: 2.4,  # V3.2 — ADS131E08, référence interne 2,4 V (CONFIG3 PD_REFBUF=1, VREF_4V=0),
+             # PGA 1 : ±2,4 V différentiels (Oliver Munroe, 2026-09-08). Le firmware V3.2
+             # écrit aussi `adc_full_scale_v` dans l'en-tête (header_version 2), qui prime.
+             # ⚠ V3.2 = 24 bits sign-extended sur 32 : le rapport counts/FS reste 2^31.
+             # ⚠ Voies GH (×25 analogique) : le gain de la chaîne est `analog_gain` × `adc_gain`.
 }
 
 
