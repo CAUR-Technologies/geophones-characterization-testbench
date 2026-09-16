@@ -5,7 +5,41 @@
 		},
 		{
 			"path": "../zephyrproject"
+		},
+		{
+			"path": "../zephyr-caur"
+		},
+		{
+			"path": "../geophone-app"
 		}
 	],
-	"settings": {}
+	"settings": {
+		// zephyrproject (~192k fichiers) et zephyr-caur (~35k) noient les
+		// indexeurs du window. On les sort du watcher et de la recherche.
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/venv/**": true,
+			"**/.venv/**": true,
+			"**/__pycache__/**": true,
+			"**/zephyrproject/**": true,
+			"**/zephyr-caur/**": true,
+			"**/build/**": true,
+			"**/modules/**": true
+		},
+		"search.exclude": {
+			"**/venv": true,
+			"**/.venv": true,
+			"**/__pycache__": true,
+			"**/build": true
+		},
+		"python.analysis.exclude": [
+			"**/node_modules",
+			"**/__pycache__",
+			".git",
+			"**/venv/**",
+			"**/.venv/**",
+			"**/build/**"
+		]
+	}
 }

@@ -6,7 +6,7 @@ import ctypes, ctypes.wintypes, struct, os, sys
 
 DLL_PATH    = r'C:\Program Files (x86)\Texas Instruments\ADS1285 EVM\Library\tiPHIChar.dll'
 SHARED_PATH = r'C:\Program Files (x86)\Texas Instruments\ADS1285 EVM\Shared Library'
-PSM_DIR     = r'C:\Projets\ADS1285_Automation\bridge\phi_binaries\psm0'
+PSM_DIR     = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bridge', 'phi_binaries', 'psm0')
 
 os.add_dll_directory(os.path.dirname(DLL_PATH))
 os.add_dll_directory(SHARED_PATH)

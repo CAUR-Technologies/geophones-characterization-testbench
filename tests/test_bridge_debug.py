@@ -28,7 +28,8 @@ def test_bridge():
     # 3. Acquire samples (small test)
     print("\n=== Acquiring 256 samples @ 4000 Hz ===")
     import os
-    phi_binaries = r"C:\Projets\ADS1285_Automation\bridge\phi_binaries"
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    phi_binaries = os.path.join(_root, "bridge", "phi_binaries")
     psm_acq = os.path.join(phi_binaries, "psm_04_40B.bin")
     psm_seq = os.path.join(phi_binaries, "psm_05_200B.bin")
 

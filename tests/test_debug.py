@@ -38,7 +38,8 @@ call("initialize", [0])
 
 print("\n=== 4. initialize_full (chemins seulement) ===")
 import os
-base = r"C:\Projets\ADS1285_Automation\bridge\phi_binaries"
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base = os.path.join(_root, "bridge", "phi_binaries")
 fpga = os.path.join(base, "fpga_189956B.bin")
 psms = sorted(os.path.join(base, f) for f in os.listdir(base)
               if f.startswith("psm_") and f.endswith(".bin"))

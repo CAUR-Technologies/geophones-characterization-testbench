@@ -16,7 +16,8 @@ def test_pipe_out():
     num_samples = 256
     n_bytes = num_samples * 4
 
-    phi_binaries = r"C:\Projets\ADS1285_Automation\bridge\phi_binaries"
+    _root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    phi_binaries = os.path.join(_root, "bridge", "phi_binaries")
     psm_acq = os.path.join(phi_binaries, "psm_04_40B.bin")
     psm_seq = os.path.join(phi_binaries, "psm_05_200B.bin")
 

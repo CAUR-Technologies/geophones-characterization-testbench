@@ -35,8 +35,9 @@ dll.PHI_Process.argtypes = [ctypes.c_int32, ctypes.c_int32, P]
 dll.PHI_WriteFPGARegister.restype  = ctypes.c_int32
 dll.PHI_WriteFPGARegister.argtypes = [ctypes.c_int32, ctypes.c_int32, ctypes.c_int32, ctypes.c_int32]
 
-PSM_ACQ_PATH = r'C:\Projets\ADS1285_Automation\bridge\phi_binaries\psm_04_40B.bin'
-PSM_SEQ_PATH = r'C:\Projets\ADS1285_Automation\bridge\phi_binaries\psm_05_200B.bin'
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PSM_ACQ_PATH = os.path.join(_root, 'bridge', 'phi_binaries', 'psm_04_40B.bin')
+PSM_SEQ_PATH = os.path.join(_root, 'bridge', 'phi_binaries', 'psm_05_200B.bin')
 
 GetModuleHandle = ctypes.windll.kernel32.GetModuleHandleW
 import ctypes.wintypes

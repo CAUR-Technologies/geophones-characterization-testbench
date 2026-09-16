@@ -44,7 +44,7 @@ handle = h.value
 print(f'handle=0x{handle:08X}  dll_base=0x{dll_base:08X}', flush=True)
 
 # Directory containing DataMem.bin and CMdMem.bin
-PSM_DIR = r'C:\Projets\ADS1285_Automation\bridge\phi_binaries\psm0'
+PSM_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'bridge', 'phi_binaries', 'psm0')
 print(f'PSM_DIR={PSM_DIR}', flush=True)
 print(f'Files: {os.listdir(PSM_DIR)}', flush=True)
 

@@ -46,8 +46,9 @@ dll.PHI_Write.argtypes = [ctypes.c_int32, ctypes.c_int32, ctypes.c_int32, ctypes
 dll.PHI_Process.restype  = ctypes.c_int32
 dll.PHI_Process.argtypes = [ctypes.c_int32, ctypes.c_int32, P]
 
-PSM_ACQ = r"C:\\Projets\\ADS1285_Automation\\bridge\\phi_binaries\\psm_04_40B.bin"
-PSM_SEQ = r"C:\\Projets\\ADS1285_Automation\\bridge\\phi_binaries\\psm_05_200B.bin"
+_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PSM_ACQ = os.path.join(_root, "bridge", "phi_binaries", "psm_04_40B.bin")
+PSM_SEQ = os.path.join(_root, "bridge", "phi_binaries", "psm_05_200B.bin")
 
 c = ctypes.c_int32(0)
 dll.PHI_CheckforDevices(ctypes.byref(c))

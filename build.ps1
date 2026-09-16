@@ -1,8 +1,8 @@
 # =============================================================================
-# build.ps1  —  Script de build ADS1285 Automation
+# build.ps1  —  Script de build Geophones Characterization Testbench
 #
-# Produit dans dist\ADS1285_Automation\ :
-#   ADS1285_Automation.exe   (GUI 64-bit)
+# Produit dans dist\geophones-characterization-testbench\ :
+#   geophones-characterization-testbench.exe   (GUI 64-bit)
 #   bridge32.exe             (bridge 32-bit, lance par l'exe principal)
 #   bridge\phi_binaries\     (binaires PHI embarques)
 #   config.ini               (cree au premier lancement si absent)
@@ -50,21 +50,21 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "bridge32.exe construit avec succes." -ForegroundColor Green
 
 # -----------------------------------------------------------------------
-# Etape 2 : ADS1285_Automation.exe (64-bit)
+# Etape 2 : geophones-characterization-testbench.exe (64-bit)
 # -----------------------------------------------------------------------
 Write-Host ""
-Write-Host "=== Etape 2/3 : Build ADS1285_Automation.exe (64-bit) ===" -ForegroundColor Cyan
+Write-Host "=== Etape 2/3 : Build geophones-characterization-testbench.exe (64-bit) ===" -ForegroundColor Cyan
 
-& $Python64 -m PyInstaller ads1285_automation.spec `
+& $Python64 -m PyInstaller geophones_characterization_testbench.spec `
     --distpath dist `
     --workpath build `
     --noconfirm
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "ERREUR : build ADS1285_Automation.exe echoue." -ForegroundColor Red
+    Write-Host "ERREUR : build geophones-characterization-testbench.exe echoue." -ForegroundColor Red
     exit 1
 }
-Write-Host "ADS1285_Automation.exe construit avec succes." -ForegroundColor Green
+Write-Host "geophones-characterization-testbench.exe construit avec succes." -ForegroundColor Green
 
 # -----------------------------------------------------------------------
 # Etape 3 : Assembler le dossier final
@@ -72,7 +72,7 @@ Write-Host "ADS1285_Automation.exe construit avec succes." -ForegroundColor Gree
 Write-Host ""
 Write-Host "=== Etape 3/3 : Assemblage du dossier de distribution ===" -ForegroundColor Cyan
 
-$DistDir = Join-Path $ScriptDir "dist\ADS1285_Automation"
+$DistDir = Join-Path $ScriptDir "dist\geophones-characterization-testbench"
 
 # Copier bridge32.exe dans le dossier de l'exe principal
 $Bridge32Src = Join-Path $ScriptDir "dist_bridge32\bridge32.exe"
