@@ -6,7 +6,9 @@ Format (cf. geophones-product `docs/data-format.md`) : **miniSEED v3 (FDSN)**,
   * échantillons **int32** (ADC 24 bits signé étendu), records 4096 o ;
   * fichier = `survey-data/{survey_id}/{sn}_{YYYYMMDDTHHMMSS}.dat`, 1 record
     d'en-tête puis des records d'échantillons **par voie** ;
-  * voie ADC dans l'extra-header **`caurtech.channel`** = "1" | "2" | "3" ;
+  * voie ADC dans l'extra-header **`caurtech.channel`** : "1" | "2" | "3"
+    (historique), "X" | "Y" | "Z" (V3.1 depuis le SID FDSN) ou "X_GH"… (V3.2) —
+    voir `channel_axis()` ;
   * horodatage en **nanosecondes depuis l'époque Unix (UTC)**, RTC disciplinée
     par le 1PPS GNSS.
 
@@ -64,6 +66,44 @@ FULLSCALE_VPEAK_G1_BY_HWREV = {
              # ⚠ V3.2 = 24 bits sign-extended sur 32 : le rapport counts/FS reste 2^31.
              # ⚠ Voies GH (×25 analogique) : le gain de la chaîne est `analog_gain` × `adc_gain`.
 }
+
+
+# --- Identifiants de voie (`caurtech.channel`) -------------------------------
+# Trois générations d'étiquettes coexistent dans les fichiers :
+#   * "1" | "2" | "3"          firmware V3.1 jusqu'au SID FDSN (2026-09) ;
+#   * "X" | "Y" | "Z"          firmware V3.1 à partir du SID (J4/J5/J6 = X/Y/Z) ;
+#   * "X_GH", "X_GL", ...      carte V3.2 (deux chemins de gain par axe), plus
+#                              "AUX1"/"AUX2" pour les entrées d'extension.
+# Repère de l'unité : X = est, Y = nord, Z = haut (geophones-product,
+# convention-orientation-polarite.md). "1"/"2"/"3" valent X/Y/Z (J4/J5/J6).
+_LEGACY_AXIS = {"1": "X", "2": "Y", "3": "Z"}
+AXES = ("X", "Y", "Z")
+
+
+def channel_axis(channel_id: str) -> str | None:
+    """Axe ("X" | "Y" | "Z") d'une voie, ou None si ce n'est pas une voie d'axe
+    (AUX, étiquette inconnue). Accepte les trois générations d'étiquettes."""
+    cid = str(channel_id)
+    if cid in _LEGACY_AXIS:
+        return _LEGACY_AXIS[cid]
+    head = cid.split("_", 1)[0]
+    return head if head in AXES else None
+
+
+def axis_channel_ids(present) -> list[str]:
+    """Voies d'axe présentes, rangées X, Y, Z (puis GH avant GL à axe égal).
+
+    `present` : itérable d'identifiants (clés d'un dict de résultats, par ex.).
+    Les voies qui ne sont pas des axes (AUX) sont écartées.
+    """
+    ids = [str(c) for c in present if channel_axis(c) is not None]
+    return sorted(ids, key=lambda c: (AXES.index(channel_axis(c)), c))
+
+
+def missing_axes(present) -> list[str]:
+    """Axes (parmi X, Y, Z) qu'aucune voie de `present` ne couvre."""
+    covered = {channel_axis(c) for c in present}
+    return [a for a in AXES if a not in covered]
 
 
 def fullscale_vpeak_g1(meta: dict | None = None) -> float:
@@ -143,7 +183,7 @@ class Channel3Axis:
     brute et `timing_report()` chiffre l'écart — voir ces deux-là avant de
     croire un alignement temporel sur un fichier long.
     """
-    channel_id: str                 # "1" | "2" | "3"
+    channel_id: str                 # "1".."3", "X".."Z" ou "X_GH"… : voir channel_axis()
     data: np.ndarray                # échantillons int32 (counts ADC)
     start_time_ns: int              # ns depuis l'époque Unix (UTC) du 1er échantillon
     sample_rate_hz: float

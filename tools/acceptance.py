@@ -253,7 +253,9 @@ def _transfer_test(g, sp):
                               f"corrompus ({rate*100:.2f}%), {kbps:.0f} Ko/s{note}"})
     if chan_std:
         present = sorted(chan_std)
-        missing = not (set(chan_std) >= {"1", "2", "3"})
+        # Les trois AXES doivent être couverts, quelle que soit la génération
+        # d'étiquettes ("1/2/3", "X/Y/Z", ou "X_GH"… en V3.2).
+        missing = bool(dat_reader.missing_axes(chan_std))
         dead = not all(v[0] > 5 for v in chan_std.values())   # std≈0 = voie figée
         railed = any(v[1] for v in chan_std.values())
         # FAIL = défaut ADC réel (voie absente/morte). Saturation = amplitude

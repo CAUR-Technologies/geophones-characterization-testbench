@@ -255,3 +255,25 @@ if __name__ == "__main__":
             print(f"  FAIL {fn.__name__}: {e}")
     print(f"\n{len(fns) - failed}/{len(fns)} tests passes")
     sys.exit(1 if failed else 0)
+
+
+def test_channel_ids_accept_the_three_label_generations():
+    """`caurtech.channel` : "1/2/3" (historique), "X/Y/Z" (V3.1 avec SID FDSN),
+    "X_GH"... (V3.2). Les outils raisonnent par AXE, pas par etiquette."""
+    from equipment.geophone3axis.dat_reader import (
+        axis_channel_ids, channel_axis, missing_axes)
+
+    assert [channel_axis(c) for c in ("1", "2", "3")] == ["X", "Y", "Z"]
+    assert [channel_axis(c) for c in ("X", "Y", "Z")] == ["X", "Y", "Z"]
+    assert channel_axis("Z_GL") == "Z" and channel_axis("X_GH") == "X"
+    assert channel_axis("AUX1") is None and channel_axis("?") is None
+
+    assert axis_channel_ids({"3": 0, "1": 0, "2": 0}) == ["1", "2", "3"]
+    assert axis_channel_ids(["Z", "X", "Y"]) == ["X", "Y", "Z"]
+    # V3.2 : ordre X, Y, Z puis GH avant GL ; les AUX ne sont pas des axes.
+    assert axis_channel_ids(["AUX1", "Z_GL", "X_GL", "X_GH", "Y_GH"]) == [
+        "X_GH", "X_GL", "Y_GH", "Z_GL"]
+
+    assert missing_axes(["1", "2", "3"]) == []
+    assert missing_axes(["X_GH", "Y_GL"]) == ["Z"]
+    assert missing_axes(["AUX1"]) == ["X", "Y", "Z"]

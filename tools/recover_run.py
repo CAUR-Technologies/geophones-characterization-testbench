@@ -29,7 +29,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from equipment.geophone3axis.dat_reader import UNIT3AXIS_FULLSCALE_VPEAK_G1
+from equipment.geophone3axis.dat_reader import UNIT3AXIS_FULLSCALE_VPEAK_G1, axis_channel_ids
 from equipment.geophone3axis.session import segment_correlate, channels_from_dat
 from equipment.dsp import fit_geophone_response
 
@@ -74,18 +74,22 @@ def recover(csv_path):
     # Corrélation par segmentation (MÊME code que le GUI : session.segment_correlate).
     DAT = segment_correlate(T, X, freqs, vel, lsb_v)
 
-    print(f"\n{'f(Hz)':>7}{'v(m/s)':>9}{'ch1 V/(m/s)':>13}{'ch2':>8}{'ch3':>8}{'n':>7}")
+    # Voies d'axe présentes : "1/2/3" (historique), "X/Y/Z" ou "X_GH"… (V3.2).
+    cids = axis_channel_ids(DAT) or ["1", "2", "3"]
+    head = "".join(f"{(c + ' V/(m/s)') if i == 0 else c:>{13 if i == 0 else 8}}"
+                   for i, c in enumerate(cids))
+    print(f"\n{'f(Hz)':>7}{'v(m/s)':>9}{head}{'n':>7}")
     for fq in freqs:
         line = f"{fq:>7}{vel[fq]:>9.5f}"
-        for cid in ("1", "2", "3"):
+        for i, cid in enumerate(cids):
             d = DAT.get(cid, {}).get(fq)
-            w = 13 if cid == "1" else 8
-            line += (f"{d['sens_v_per_mps']:>{w}.{1 if cid=='1' else 2}f}" if d else f"{'-':>{w}}")
-        d1 = DAT.get("1", {}).get(fq)
+            w = 13 if i == 0 else 8
+            line += (f"{d['sens_v_per_mps']:>{w}.{1 if i == 0 else 2}f}" if d else f"{'-':>{w}}")
+        d1 = DAT.get(cids[0], {}).get(fq)
         print(line + (f"{d1['n']:>7}" if d1 else f"{'-':>7}"))
 
     on_axis = max(DAT, key=lambda c: sum(v["counts_peak"] for v in DAT[c].values())
-                  if DAT[c] else 0) if DAT else "1"
+                  if DAT[c] else 0) if DAT else cids[0]
     ff = [f for f in freqs if f in DAT.get(on_axis, {})]
     ss = [DAT[on_axis][f]["sens_v_per_mps"] for f in ff]
     fit = fit_geophone_response(ff, ss) if len(ff) >= 4 else None
@@ -110,13 +114,13 @@ def recover(csv_path):
     with open(base + "_RESULTS.csv", "w", newline="", encoding="utf-8") as fp:
         w = csv.writer(fp)
         hdr = ["freq_hz", "accel_g", "on_axis_channel"]
-        for c in ("1", "2", "3"):
+        for c in cids:
             hdr += [f"ch{c}_S_V_per_mps", f"ch{c}_S_cnt_per_mps", f"ch{c}_counts_pk", f"ch{c}_n"]
         w.writerow(hdr)
         for f in freqs:
             row = [f"{f:g}", f"{accel.get(f, float('nan')):.6g}", on_axis]
-            for c in ("1", "2", "3"):
-                d = DAT[c].get(f, {})
+            for c in cids:
+                d = DAT.get(c, {}).get(f, {})
                 row += [f"{d.get('sens_v_per_mps', float('nan')):.6g}",
                         f"{d.get('sens_counts_per_mps', float('nan')):.6g}",
                         f"{d.get('counts_peak', float('nan')):.6g}", d.get("n", "")]
