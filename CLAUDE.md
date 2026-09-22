@@ -95,8 +95,10 @@ equipment/
   wavetek/    CLAUDE.md + wavetek.py
   accelerometer/                 accelerometer.py (NI, mesure en g)
   ads1285/                       classe géophone (via bridge 32-bit)
+  korad/      CLAUDE.md + korad.py (alimentation KA3005P, hors chaîne d'étalonnage)
 bridge/                          bridge32.py + DLL TI + binaires PHI
 gui.py                           interface Tkinter + matplotlib
+korad_gui.py / korad_cli.py      contrôle de l'alimentation de paillasse KORAD
 docs/CALIBRATION_PROTOCOL.md     protocole métrologique complet
 tests/                           tests unitaires (physique, dsp…)
 ```
