@@ -49,6 +49,11 @@ WAVETEK_PORT    = get("Wavetek", "port")
 WAVETEK_BAUD    = int(get("Wavetek", "baud"))
 WAVETEK_TIMEOUT = float(get("Wavetek", "timeout"))
 
+# --- Alimentation KORAD KA3005P ---
+KORAD_PORT    = get("Korad", "port")
+KORAD_BAUD    = int(get("Korad", "baud"))
+KORAD_TIMEOUT = float(get("Korad", "timeout"))
+
 # --- Accelerometres (NI USB-6221) ---
 NI_DEVICE_NAME        = get("NI", "device_name")
 NI_AI_CHANNELS        = get("NI", "ai_channels")

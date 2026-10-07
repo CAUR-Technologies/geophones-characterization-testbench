@@ -149,6 +149,13 @@ _DEFAULTS: dict[str, dict[str, str]] = {
         "acq_min_cycles":            "4",
         "acq_max_duration_s":        "60.0",
     },
+    "Korad": {
+        # Alimentation KORAD KA3005P (USB-serie Nuvoton VID:PID 0416:5011).
+        # port = "auto" -> detection par VID:PID ; sinon COMx explicite.
+        "port":    "auto",
+        "baud":    "9600",
+        "timeout": "0.5",
+    },
     "General": {
         "data_output_dir": "data",
     },
